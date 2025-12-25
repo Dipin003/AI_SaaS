@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import { clerkMiddleware, requireAuth } from '@clerk/express'
 import connectDB from './config/db.js'
+import aiRoutes from './routes/interview.route.js'
 
 dotenv.config()
 connectDB()
@@ -18,13 +19,8 @@ app.use(requireAuth())
 
 const PORT = process.env.PORT || 3000
 
-app.get('/', (req, res) => {
-    console.log("Hello Server")
-    res.send("Hello Server")
-})
 
-// import aiRoutes from './routes/aiRoutes.js'
-// app.use('/api/ai', aiRoutes)
+app.use('api/interview', aiRoutes)
 
 app.listen(PORT, () => {
     console.log(`Server is Running on PORT ${PORT}`)
