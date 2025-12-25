@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 
-
 const interviewSchema = mongoose.Schema({
     userId: {
-        type: userID, // will come from clerk
+        type: String, // <--- CHANGED: Must be String to store Clerk ID
         required: true
     },
     topic: {
@@ -24,5 +23,9 @@ const interviewSchema = mongoose.Schema({
         default: 'active',
     }
 }, {
-    timeStamps: true
-})
+    timestamps: true 
+});
+
+const Interview = mongoose.model('Interview', interviewSchema);
+
+export default Interview;

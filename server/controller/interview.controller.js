@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import Interview from "../models/Interview.js";
+import Interview from "../models/interview.model.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -8,8 +8,6 @@ export const startInterview = async (req, res) => {
     try {
         const { topic } = req.body;  // Changed from userPrompt to topic for clarity
         const userId = req.auth.userId;
-
-
 
         const chat = model.startChat({
             history: [
@@ -53,5 +51,57 @@ export const startInterview = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "AI Failed to generate question" });
+    }
+};
+
+export const submitAnswer = async (req, res) => {
+    try {
+        const { interviewId, userAnswer } = req.body; 
+        const userId = req.auth.userId;
+
+        // 1. Find the Interview in DB using the ID we created in startInterview
+        const interview = await Interview.findOne({ _id: interviewId, userId });
+
+        if (!interview) {
+            return res.status(404).json({ message: "Interview not found" });
+        }
+
+        // 2. Save User's Answer to the current question
+        // We find the last question (which was waiting for an answer) and update it
+        const currentQuestionIndex = interview.questions.length - 1;
+        interview.questions[currentQuestionIndex].answer = userAnswer;
+
+        // 3. Ask AI for the Next Question
+        // We tell Gemini: "The user said [userAnswer]. Give feedback and ask the next question."
+        const chat = model.startChat({
+            history: [
+                {
+                    role: "user",
+                    parts: [{ text: `The user answers: "${userAnswer}". Please provide a short rating, 1 sentence feedback, and then ask the next technical question.` }]
+                }
+            ]
+        });
+
+        const result = await chat.sendMessage("Next question please.");
+        const aiResponse = result.response.text();
+
+        // 4. Save the New Question to Database
+        // We add a NEW block to the array for the next round
+        interview.questions.push({
+            question: aiResponse, 
+            answer: "" // Empty again, waiting for next answer
+        });
+
+        await interview.save();
+
+        // 5. Send back to Frontend so it can speak the new question
+        res.json({
+            message: "Answer saved",
+            nextQuestion: aiResponse
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error processing answer" });
     }
 };
