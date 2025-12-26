@@ -23,7 +23,7 @@ const interviewSchema = mongoose.Schema({
         default: 'active',
     }
 }, {
-    timestamps: true 
+    timestamps: true
 });
 
 const Interview = mongoose.model('Interview', interviewSchema);

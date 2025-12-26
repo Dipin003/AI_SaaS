@@ -1,6 +1,6 @@
 import express from 'express'
 // 1. Import BOTH controllers here
-import { startInterview, submitAnswer } from '../controller/interview.controller.js'
+import { endInterview, getUserInterviews, startInterview, submitAnswer } from '../controller/interview.controller.js'
 import { requireAuth } from '@clerk/express' // Don't forget auth!
 
 const router = express.Router()
@@ -10,5 +10,8 @@ router.post('/start', requireAuth(), startInterview)
 
 // Route 2: Submit an answer (Add this line)
 router.post('/answer', requireAuth(), submitAnswer)
+
+router.post('/list', requireAuth(), getUserInterviews)
+router.post('/end', requireAuth(), endInterview)
 
 export default router

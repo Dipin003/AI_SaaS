@@ -56,7 +56,7 @@ export const startInterview = async (req, res) => {
 
 export const submitAnswer = async (req, res) => {
     try {
-        const { interviewId, userAnswer } = req.body; 
+        const { interviewId, userAnswer } = req.body;
         const userId = req.auth.userId;
 
         // 1. Find the Interview in DB using the ID we created in startInterview
@@ -88,7 +88,7 @@ export const submitAnswer = async (req, res) => {
         // 4. Save the New Question to Database
         // We add a NEW block to the array for the next round
         interview.questions.push({
-            question: aiResponse, 
+            question: aiResponse,
             answer: "" // Empty again, waiting for next answer
         });
 
@@ -103,5 +103,67 @@ export const submitAnswer = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error processing answer" });
+    }
+};
+
+// Get all interviews for the logged-in user
+export const getUserInterviews = async (req, res) => {
+    try {
+        const userId = req.auth.userId;
+
+        // Find all interviews where userId matches, sorted by newest first
+        const interviews = await Interview.find({ userId }).sort({ createdAt: -1 });
+
+        res.status(200).json(interviews);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch interviews" });
+    }
+};
+
+// End the interview and get a final report
+export const endInterview = async (req, res) => {
+    try {
+        const { interviewId } = req.body;
+        const userId = req.auth.userId;
+
+        const interview = await Interview.findOne({ _id: interviewId, userId });
+
+        if (!interview) {
+            return res.status(404).json({ message: "Interview not found" });
+        }
+        // 1. Mark status as completed
+        interview.status = 'completed';
+
+        // 2. Ask Gemini for a Final Summary
+        // We send the whole list of Q&A to get a high-level feedback
+        const historyText = interview.questions.map(q =>
+            `Q: ${q.question} | A: ${q.answer}`
+        ).join("\n");
+
+        const prompt = `
+            Based on this interview transcript:
+            ${historyText}
+            
+            Provide:
+            1. An overall score out of 100.
+            2. Three strengths.
+            3. Two areas for improvement.
+            Keep the tone professional and encouraging.
+        `;
+
+        const result = await model.generateContent(prompt);
+        const report = result.response.text();
+
+        await interview.save();
+
+        res.json({
+            message: "Interview ended",
+            finalReport: report
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error generating report" });
     }
 };
