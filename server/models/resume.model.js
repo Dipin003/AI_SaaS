@@ -13,11 +13,19 @@ const resumeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // Inside your resumeSchema analysis object:
     analysis: {
-        score: Number,
+        score: { type: Number, default: 0 },
         strengths: [String],
         improvements: [String],
-        suggestdQuestions: [String]
+        suggestedQuestions: [String], // These were just the questions
+        practiceQA: [                 // NEW: Questions WITH Answers
+            {
+                question: String,
+                answer: String,
+                tip: String // Advice on how to deliver the answer
+            }
+        ]
     }
 }, {
     timestamps: true

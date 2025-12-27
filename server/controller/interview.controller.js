@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Interview from "../models/interview.model.js";
+import Resume from '../models/resume.model.js'; 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -165,5 +166,55 @@ export const endInterview = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error generating report" });
+    }
+};
+
+
+
+export const startResumeInterview = async (req, res) => {
+    try {
+        const { resumeId } = req.body;
+        const userId = req.auth.userId;
+
+        // 1. Fetch the user's specific resume
+        const resume = await Resume.findOne({ _id: resumeId, userId });
+        if (!resume) return res.status(404).json({ message: "Resume not found" });
+
+        // 2. Instruct Gemini to be a specific interviewer
+        const chat = model.startChat({
+            history: [
+                {
+                    role: "user",
+                    parts: [{ text: `
+                        You are a technical interviewer. 
+                        I am providing you with my resume text: "${resume.resumeText}". 
+                        
+                        Your task:
+                        1. Analyze my experience and projects.
+                        2. Ask me the first technical question based ONLY on my resume.
+                        3. Keep it short and vocal-friendly. No code blocks.
+                    `}],
+                },
+            ],
+        });
+
+        const result = await chat.sendMessage("Start the resume-based interview.");
+        const aiQuestion = result.response.text();
+
+        // 3. Create a new Interview record in the DB
+        const newInterview = await Interview.create({
+            userId,
+            topic: `Resume Interview: ${resume.fileName}`,
+            questions: [{ question: aiQuestion, answer: "" }]
+        });
+
+        res.status(201).json({
+            interviewId: newInterview._id,
+            question: aiQuestion
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to start resume interview" });
     }
 };

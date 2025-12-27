@@ -51,3 +51,56 @@ export const uploadAndAnalyzeResume = async (req, res) => {
         res.status(500).json({ message: "Resume analysis failed" });
     }
 };
+
+export const generateStudyGuide = async (req, res) => {
+    try {
+        const { resumeId } = req.body;
+        const userId = req.auth.userId;
+
+        const resume = await Resume.findOne({ _id: resumeId, userId });
+
+        if (!resume) return res.status(404).json({ message: "Resume not found" });
+
+        const prompt = `
+    Context: You are an expert technical recruiter. Based on the following resume text, generate a set of 15 technical interview questions.
+    
+    Resume Data: "${resume.resumeText}"
+
+    Requirements:
+    1. Generate 15 questions in total: 5 Easy, 5 Medium, and 5 Hard.
+    2. Difficulty definitions:
+       - Easy: Basic syntax, fundamental concepts, and tool usage.
+       - Medium: Implementation details, system design basics, and troubleshooting.
+       - Hard: Optimization, architectural trade-offs, and complex edge cases.
+    3. For each question, provide:
+       - The "question" text.
+       - An "answer" (comprehensive and professional).
+       - A "tip" (pro-tip on what to emphasize).
+       - A "difficulty" label (Easy, Medium, or Hard).
+
+    Return ONLY a valid JSON array of objects. Do not include markdown formatting or extra text.
+
+    Format:
+    [
+        {
+            "difficulty": "Easy",
+            "question": "...",
+            "answer": "...",
+            "tip": "..."
+        },
+        ...
+    ]
+`;
+        const result = await model.generateContent(prompt);
+        const qaData = JSON.parse(result.response.text());
+
+        resume.analysis.practiceQA = qaData;
+        await resume.save();
+
+        res.status(200).json({ message: "Study guide generated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to generate study guide" });
+    }
+}
+
