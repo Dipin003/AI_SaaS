@@ -1,9 +1,12 @@
+import { Button } from '@/components/ui/button'
 import React from 'react'
 
 const page = () => {
   return (
-    <div className='min-h-screen bg-gray-900 text-white'>
-      <h1 className='text-4xl font-bold text-center pt-20'>Welcome to My Next.js App</h1>
+    <div className='min-h-screen'>
+      <h1 className='text-4xl font-bold text-yellow-300'>Welcome to My Next.js App</h1>
+      <br />
+      <Button className={`bg-black text-white mx-3`}>Hello </Button>
     </div>
   )
 }
