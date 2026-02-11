@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button'
-import React from 'react'
 
 const page = () => {
   return (
@@ -7,8 +6,9 @@ const page = () => {
       <h1 className='text-4xl font-bold text-yellow-300'>Welcome to My Next.js App</h1>
       <br />
       <Button className={`bg-black text-white mx-3`}>Hello </Button>
+      
+
     </div>
   )
 }
-
 export default page
