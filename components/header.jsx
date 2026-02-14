@@ -38,6 +38,7 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center space-x-2 nd:space-x-4">
+          <SignedIn>
           <Link href="/dashboard">
             <Button variant="outline">
               <LayoutDashboard className="h-4 w-4 mr-2" />
@@ -78,6 +79,7 @@ export default function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </SignedIn>
 
           <SignedOut>
             <SignInButton mode="modal">
