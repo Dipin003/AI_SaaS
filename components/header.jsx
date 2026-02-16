@@ -39,46 +39,46 @@ export default function Header() {
 
         <div className="flex items-center space-x-2 nd:space-x-4">
           <SignedIn>
-          <Link href="/dashboard">
-            <Button variant="outline">
-              <LayoutDashboard className="h-4 w-4 mr-2" />
-              <span className="hidden md:block">
-                Industry Insights
-              </span>
-            </Button>
-          </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button>
-                <StarsIcon className="h-4 w-4 mr-2" />
+            <Link href="/dashboard">
+              <Button variant="outline">
+                <LayoutDashboard className="h-4 w-4 mr-2" />
                 <span className="hidden md:block">
-                  Growth Tools
+                  Industry Insights
                 </span>
-                <ChevronDown className="h-4 w-4" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>
-                <Link href='/resume' className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  <span>Build Resume</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href={"/ai-cover-letter"} className="flex items-center gap-2" >
-                  <PenBox className="h-4 w-4" />
-                  Cover Letter
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href={"/interview"} className="flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4" />
-                  Interview Prep
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </Link>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button>
+                  <StarsIcon className="h-4 w-4 mr-2" />
+                  <span className="hidden md:block">
+                    Growth Tools
+                  </span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Link href='/resume' className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span>Build Resume</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href={"/ai-cover-letter"} className="flex items-center gap-2" >
+                    <PenBox className="h-4 w-4" />
+                    Cover Letter
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href={"/interview"} className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" />
+                    Interview Prep
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SignedIn>
 
           <SignedOut>
