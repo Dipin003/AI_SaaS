@@ -7,7 +7,12 @@ import { faqs } from "@/data/faqs"
 import { features } from "@/data/features"
 import { howItWorks } from "@/data/howItWorks"
 import { testimonial } from "@/data/testimonial"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@radix-ui/react-accordion"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -150,11 +155,10 @@ const page = () => {
 
 
 
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+           <section className="w-full py-12 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
-
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">
+            <h2 className="text-3xl font-bold mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-muted-foreground">
@@ -163,22 +167,20 @@ const page = () => {
           </div>
 
           <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible>
-              {faqs?.map((faq, index) => (
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger className="text-left">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent>
-                    {faq.answer}
-                  </AccordionContent>
+                  <AccordionContent>{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
           </div>
-
         </div>
       </section>
+
 
 
       <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
@@ -192,9 +194,9 @@ const page = () => {
             </p>
             <Link href="/dashboard" passHref>
               <Button
-              size="lg"
-              variant="secondary"
-              className="h-11 mt-5 animate-bounce"
+                size="lg"
+                variant="secondary"
+                className="h-11 mt-5 animate-bounce"
               >
                 Start Your Journey Toady <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
