@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { onboardingSchema } from "@/app/lib/schema"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -19,6 +19,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import useFetch from "@/hooks/useFetch"
+import { updateUser } from "@/actions/user"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 
 const OnboardingForm = ({ industries }) => {
@@ -27,6 +31,8 @@ const OnboardingForm = ({ industries }) => {
     const [selectedIndustry, setSelectedIndustry] = useState(null);
     const router = useRouter()
 
+    const { loading: updateLoading, fn: updateUserFn, data: updateResult } = useFetch(updateUser)
+
     const { register, handleSubmit, formState: { errors }, setValue,
         watch,
     } = useForm({
@@ -34,8 +40,24 @@ const OnboardingForm = ({ industries }) => {
     })
 
     const onSubmit = async (values) => {
-
+        try {
+            const formattedIndustry = `${values.industry}- ${values.subIndustry.toLowerCase().replace(/ /g, "-")}`
+            await updateUserFn({
+                ...values,
+                industry: formattedIndustry
+            })
+        } catch (error) {
+            console.error("Onboarding error:", error)
+        }
     }
+
+    useEffect(() => {
+        if (updateResult?.success && !updateLoading) {
+            toast.success("Profile updated successfully")
+            router.push("/dashboard")
+            router.refresh()
+        }
+    }, [updateLoading, updateResult])
 
     const watchIndustry = watch("industry")
 
@@ -53,7 +75,7 @@ const OnboardingForm = ({ industries }) => {
 
                             <Select
                                 onValueChange={(value) => {
-                                    setValue("industry", value)
+                                    setValue("industry", value, { shouldValidate: true })
                                     setSelectedIndustry(industries.find((ind) => ind.id === value))
                                     setValue("subIndustry", "")
                                 }}
@@ -81,7 +103,7 @@ const OnboardingForm = ({ industries }) => {
 
                                     <Select
                                         onValueChange={(value) => {
-                                            setValue("subIndustry", value)
+                                            setValue("subIndustry", value, { shouldValidate: true })
                                         }}>
                                         <SelectTrigger id="subIndustry">
                                             <SelectValue placeholder="Select an Industry" />
@@ -99,7 +121,7 @@ const OnboardingForm = ({ industries }) => {
                                     }
                                 </div>
                             )}
-                            
+
                         <div className="space-y-2">
                             <Label htmlFor="experience">
                                 Years of Experience
@@ -148,7 +170,18 @@ const OnboardingForm = ({ industries }) => {
                             )}
                         </div>
 
-                        <Button type="submit" className="w-full">Complete Profile</Button>
+                        <Button type="submit" className="w-full" disabled={updateLoading}>
+                            {
+                                updateLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    "Complete Profile"
+                                )
+                            }
+                        </Button>
                     </form>
                 </CardContent>
             </Card>

@@ -3,6 +3,7 @@
 import { db } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 
+
 export async function updateUser(data) {
     const { userId } = await auth()
 
@@ -31,9 +32,9 @@ export async function updateUser(data) {
                             industry: data.industry,
                             salaryRanges: [],
                             growthRate: 0,
-                            demandLevel: "Medium",
+                            demandLevel: "MEDIUM",
                             topSkills: [],
-                            marketOutlook: "Neutral",
+                            marketOutlook: "NEUTRAL",
                             keyTrends: [],
                             recommendedSkills: [],
                             nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -56,11 +57,11 @@ export async function updateUser(data) {
             },
             { timeout: 10000, } // default 5000
         )
-        return result.user;
+        return { success: true, ...result }
 
     } catch (error) {
         console.error("Error updating user and industry", error.message);
-        throw new Error("Failed to update profile")
+        throw new Error("Failed to update profile" + error.message)
     }
 }
 
