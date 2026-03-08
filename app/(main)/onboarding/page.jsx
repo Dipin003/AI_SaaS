@@ -1,19 +1,19 @@
 import { industries } from "@/data/industries"
 import OnboardingForm from "./_components/onboarding-from"
 import { getUserOnboardingStatus } from "@/actions/user"
-import { redirect } from "next/dist/server/api-utils"
+import { redirect } from "next/navigation"
 
 const Onboarding = async () => {
-  // Check if user is already onboarded
-  const {isOnboarded} = await getUserOnboardingStatus()
 
-  if(isOnboarded) {
+  const { isOnboarded } = await getUserOnboardingStatus()
+
+  if (isOnboarded) {
     redirect("/dashboard")
   }
 
   return (
     <main>
-      <OnboardingForm industries={industries}/>
+      <OnboardingForm industries={industries} />
     </main>
   )
 }
