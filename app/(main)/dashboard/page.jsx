@@ -1,5 +1,5 @@
 import { getUserOnboardingStatus } from '@/actions/user'
-import { redirect } from 'next/dist/server/api-utils'
+import { redirect } from "next/navigation";
 
 const DashBoard = async () => {
   const {isOnboarded} = await getUserOnboardingStatus()

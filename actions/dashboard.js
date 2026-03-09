@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/prisma"
-import { auth } from "@clerk/nextjs/dist/types/server"
+import { auth } from "@clerk/nextjs/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
 const genAi = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
