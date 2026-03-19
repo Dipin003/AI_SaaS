@@ -141,7 +141,7 @@ const Quiz = () => {
                     ))}
                 </RadioGroup>
 
-                {true && <div className="mt-4 p-4 bg-muted rounded-lg">
+                {showExplanation && <div className="mt-4 p-4 bg-muted rounded-lg">
                     <p className="font-medium">Explanation</p>
                     <p className="text-muted-foreground">{question.explanation}</p>
                 </div>}
