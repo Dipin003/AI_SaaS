@@ -105,17 +105,17 @@ const Quiz = () => {
                     </p>
                 </CardContent>
                 <CardFooter>
-    <Button
-        className="w-full"
-        onClick={() => generateQuizFn()}
-        disabled={generatingQuiz}
-    >
-        {generatingQuiz ? "Generating Quiz..." : "Start Quiz"}
-    </Button>
-</CardFooter>
+                    <Button
+                        className="w-full"
+                        onClick={() => generateQuizFn()}
+                        disabled={generatingQuiz}
+                    >
+                        {generatingQuiz ? "Generating Quiz..." : "Start Quiz"}
+                    </Button>
+                </CardFooter>
             </Card>
         )
-    } 
+    }
 
     const question = quizData[currentQuestion]
 

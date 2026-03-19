@@ -82,12 +82,14 @@ export async function saveQuizResults(questions, answers, score) {
 
     const wrongAnswers = questionResults.filter((q) => !q.isCorrect)
 
+        let improvementTip = null
+
+
     if (wrongAnswers.length > 0) {
         const wrongQuestionsText = wrongAnswers.map((q) =>
             `Question: "${q.question}"\n Correct Answer: "${q.answer}"\nUser Answer: "${q.userAnswer}"`
         ).join("\n\n");
 
-        let improvementTip = null
 
         const improvementPrompt = `
       The user got the following ${user.industry} technical interview questions wrong:
@@ -122,7 +124,7 @@ export async function saveQuizResults(questions, answers, score) {
         })
         return assessment
     } catch (error) {
-        console.error("Error saving quiz results: ", error)
-        throw new Error("Failed to save quiz results")
+        console.error("FULL ERROR 👉", error);
+        throw error;   
     }
 }   
