@@ -82,7 +82,7 @@ export async function saveQuizResults(questions, answers, score) {
 
     const wrongAnswers = questionResults.filter((q) => !q.isCorrect)
 
-        let improvementTip = null
+    let improvementTip = null
 
 
     if (wrongAnswers.length > 0) {
@@ -125,6 +125,35 @@ export async function saveQuizResults(questions, answers, score) {
         return assessment
     } catch (error) {
         console.error("FULL ERROR 👉", error);
-        throw error;   
+        throw error;
     }
-}   
+}
+
+
+export async function getAssessments() {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized")
+
+    const user = await db.user.findUnique({
+        where: {
+            clerkUserId: userId,
+        }
+    })
+
+    if (!user) throw new Error("User not found")
+
+    try {
+        const assessments = await db.assessment.findMany({
+            where: {
+                userId: user.id,
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
+        })
+        return assessments;
+    } catch (error) {
+        console.error("Error fetching assessments: ", error)
+        throw new Error("Failed to fetch assessments")
+    }
+}
