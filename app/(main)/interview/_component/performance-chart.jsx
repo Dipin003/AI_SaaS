@@ -73,7 +73,6 @@ const PerformanceChart = ({ assessments }) => {
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
-
                 </CardContent>
             </Card>
 
