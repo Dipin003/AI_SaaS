@@ -1,3 +1,5 @@
+"use server"
+
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -103,7 +105,7 @@ export async function improveWithAI({ current, type }) {
     const improvedContent = response.text().trim();
 
     return improvedContent;
-    
+
   } catch (error) {
     console.error("Error improving content:", error.message);
     throw new Error("Failed to improve content");
