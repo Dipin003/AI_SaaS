@@ -125,11 +125,10 @@ export async function deleteCoverLetter(id) {
 
     if (!user) throw new Error("User not found");
 
-    return await db.coverLetter.delte({
+    return await db.coverLetter.delete({
         where: {
             id,
             userId: user.id,
         }
     })
-
 }
