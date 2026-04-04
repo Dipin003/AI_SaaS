@@ -5,6 +5,15 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+
+  theme: {
+    extend: {
+      screens: {
+        'mid': { 'min': '400px', 'max': '770px' },
+      }
+    },
+  },
+
   theme: {
     extend: {
       colors: {
