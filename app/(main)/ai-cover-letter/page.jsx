@@ -2,9 +2,13 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
 import CoverLetterList from "./_components/cover-letter-list"
+import { getCoverLetters } from "@/actions/cover-letter"
 
 
-const AiCoverLetterPage = () => {
+const AiCoverLetterPage = async () => {
+
+  const coverLetters = await getCoverLetters()
+
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-2 items-center justify-between mb-5 px-5">
@@ -21,7 +25,7 @@ const AiCoverLetterPage = () => {
         </Link>
       </div>
 
-      <CoverLetterList />
+      <CoverLetterList coverLetters={coverLetters} />
     </div>
   )
 }
