@@ -4,17 +4,13 @@ import { generateCoverLetter } from "@/actions/cover-letter"
 import { coverLetterSchema } from "@/app/lib/schema"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import useFetch from "@/hooks/useFetch"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Label } from "@radix-ui/react-label"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-
 
 const CoverLetterGenerator = () => {
 
@@ -36,13 +32,12 @@ const CoverLetterGenerator = () => {
     } = useFetch(generateCoverLetter)
 
     useEffect(() => {
-        if(generatedLetter) {
+        if (generatedLetter) {
             toast.success("Cover letter generated successfully!")
             router.push(`/ai-cover-letter/${generatedLetter.id}`)
             reset()
         }
-    },[generatedLetter])
-
+    }, [generatedLetter])
 
     const onSubmit = async (data) => {
         try {
@@ -53,49 +48,52 @@ const CoverLetterGenerator = () => {
     }
 
     return (
-
         <div className="space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>
-                        Job Details
-                    </CardTitle>
+                    <CardTitle>Job Details</CardTitle>
                     <CardDescription>
                         Provide information about the position you're applying for.
                     </CardDescription>
                 </CardHeader>
+
                 <CardContent>
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+                        {/* Company + Job Title */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                             <div className="space-y-2">
-                                <Label htmlFor="companyName">
+                                <label htmlFor="companyName" className="text-sm font-medium">
                                     Company Name
-                                </Label>
-                                <Input
+                                </label>
+
+                                <input
                                     id="companyName"
                                     placeholder="Enter company name"
                                     {...register("companyName")}
+                                    className="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
                                 />
-                                {
-                                    errors.companyName && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.companyName.message}
-                                        </p>
-                                    )
-                                }
+
+                                {errors.companyName && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.companyName.message}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="jobTitle">
+                                <label htmlFor="jobTitle" className="text-sm font-medium">
                                     Job Title
-                                </Label>
-                                <Input
+                                </label>
+
+                                <input
                                     id="jobTitle"
                                     placeholder="Enter job title"
                                     {...register("jobTitle")}
+                                    className="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
                                 />
+
                                 {errors.jobTitle && (
                                     <p className="text-sm text-red-500">
                                         {errors.jobTitle.message}
@@ -103,14 +101,20 @@ const CoverLetterGenerator = () => {
                                 )}
                             </div>
                         </div>
+
+                        {/* Job Description */}
                         <div className="space-y-2">
-                            <Label htmlFor="jobDescription">Job Description</Label>
-                            <Textarea
+                            <label htmlFor="jobDescription" className="text-sm font-medium">
+                                Job Description
+                            </label>
+
+                            <textarea
                                 id="jobDescription"
                                 placeholder="Paste the job description here"
-                                className="h-32"
                                 {...register("jobDescription")}
+                                className="w-full border rounded-md px-3 py-2 text-sm h-32 resize-none outline-none focus:ring-2 focus:ring-primary"
                             />
+
                             {errors.jobDescription && (
                                 <p className="text-sm text-red-500">
                                     {errors.jobDescription.message}
@@ -118,6 +122,7 @@ const CoverLetterGenerator = () => {
                             )}
                         </div>
 
+                        {/* Button */}
                         <div className="flex justify-end">
                             <Button>
                                 {generating ? (
@@ -130,6 +135,7 @@ const CoverLetterGenerator = () => {
                                 )}
                             </Button>
                         </div>
+
                     </form>
                 </CardContent>
             </Card>

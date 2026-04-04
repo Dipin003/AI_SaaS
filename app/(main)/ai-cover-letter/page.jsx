@@ -4,16 +4,15 @@ import Link from "next/link"
 import CoverLetterList from "./_components/cover-letter-list"
 import { getCoverLetters } from "@/actions/cover-letter"
 
-
 const AiCoverLetterPage = async () => {
 
-  const coverLetters = await getCoverLetters()
+  const coverLetters = await getCoverLetters();
 
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-2 items-center justify-between mb-5 px-5">
 
-        <h1 className="font-bold gradient-title text-4xl  md:text-6xl">
+        <h1 className="font-bold gradient-title text-4xl md:text-6xl">
           My Cover Letters
         </h1>
 

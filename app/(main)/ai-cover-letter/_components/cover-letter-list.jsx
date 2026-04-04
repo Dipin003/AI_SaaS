@@ -1,7 +1,7 @@
 "use client"
 
 import { deleteCoverLetter } from '@/actions/cover-letter';
-import { AlertDialogHeader } from '@/components/ui/alert-dialog';
+import { AlertDialogFooter, AlertDialogHeader } from '@/components/ui/alert-dialog';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 import { Eye, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import { format } from "date-fns";
 import { toast } from 'sonner';
 
 
@@ -77,7 +77,7 @@ const CoverLetterList = ({ coverLetters }) => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
 
-                    <AlterDialogFooter>
+                    <AlertDialogFooter>
                       <AlertDialogCancel>
                         Cancle
                       </AlertDialogCancel>
@@ -88,7 +88,7 @@ const CoverLetterList = ({ coverLetters }) => {
                         Delete
                       </AlertDialogAction>
 
-                    </AlterDialogFooter>
+                    </AlertDialogFooter>
 
                   </AlertDialogContent>
                 </AlertDialog>
