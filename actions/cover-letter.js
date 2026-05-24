@@ -51,10 +51,10 @@ export const generateCoverLetter = async (data) => {
         })
         return coverLetter
     } catch (error) {
-    console.error("ERROR:", error);
+        console.error("ERROR:", error);
 
-    throw new Error(error.message || "Failed to generate cover letter");
-}
+        throw new Error(error.message || "Failed to generate cover letter");
+    }
 }
 
 

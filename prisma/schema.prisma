@@ -30,6 +30,7 @@ model User {
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+  mockInterviews MockInterview[]
 }
 
 model Assessment {
@@ -89,4 +90,36 @@ model IndustryInsight {
 
   lastUpdated   DateTime @default(now())
   nextUpdate    DateTime
+}
+
+
+model MockInterview {
+  id            String   @id @default(cuid())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  role          String
+  difficulty    String
+  type          String
+
+  resumeId      String?
+  resume        Resume?  @relation(fields: [resumeId], references: [id])
+
+  status        String   @default("started")
+
+  overallScore  Float?
+  feedback      String?  @db.Text
+
+  questions     Json?
+  answers       Json?
+  evaluations   Json?
+
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
 }

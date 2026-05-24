@@ -17,7 +17,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon } from "lucide-react";
+import { ChevronDown, FileText, GraduationCap, LayoutDashboard, PenBox, StarsIcon, User } from "lucide-react";
 import { checkUser } from "@/lib/checkUser";
 
 
@@ -76,6 +76,13 @@ export default async function Header() {
                   <Link href={"/interview"} className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
                     Interview Prep
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem>
+                  <Link href="/mock-interview" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Mock Interview
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
