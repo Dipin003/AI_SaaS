@@ -7,7 +7,10 @@ const nextConfig = {
                 hostname: 'randomuser.me',
             }
         ]
-    }
+    },
+   experimental: {
+    serverComponentsExternalPackages: ["pdf-parse", "pdfjs-dist"],
+},
 }
 
 export default nextConfig
