@@ -131,6 +131,7 @@ export default function InterviewRoom() {
       }, 400);
     };
 
+    
     window.speechSynthesis.speak(utterance);
   };
 
@@ -278,3 +279,6 @@ export default function InterviewRoom() {
     </div>
   );
 }
+
+
+
