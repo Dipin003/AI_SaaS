@@ -1,7 +1,9 @@
 "use server";
 
-import pdfParse from "pdf-parse";
+const pdfParse = require("pdf-parse");
 import mammoth from "mammoth";
+
+
 
 export async function parseResume(formData) {
   const file = formData.get("resume");
@@ -12,13 +14,17 @@ export async function parseResume(formData) {
 
   try {
     if (name.endsWith(".pdf")) {
+      // CRITICAL FIX: Dynamically require the library inside the block
+      // This bypasses Webpack's top-level import issues in Next.js
+      const pdfParse = require("pdf-parse");
+
       const data = await pdfParse(buffer);
-      return data.text.trim();
+      return data.text ? data.text.trim() : "";
     }
 
     if (name.endsWith(".docx") || name.endsWith(".doc")) {
       const { value } = await mammoth.extractRawText({ buffer });
-      return value.trim();
+      return value ? value.trim() : "";
     }
 
     // plain text fallback (.txt)
@@ -29,9 +35,16 @@ export async function parseResume(formData) {
   }
 }
 
+
 export async function chatWithInterviewer(pastHistory, latestUserMessage, resumeText = "") {
   if (!process.env.GROQ_API_KEY) throw new Error("Missing GROQ_API_KEY in environment variables.");
   if (!latestUserMessage || latestUserMessage.trim() === "") throw new Error("Empty message");
+
+  // 1. DEBUG LOG: Check your terminal when starting the interview!
+  console.log(`[Interview API] Received resume text length: ${resumeText?.length || 0} characters`);
+  if (resumeText.length === 0) {
+    console.warn("[Interview API] WARNING: Resume text is empty! The AI has no context.");
+  }
 
   const isStartSignal = latestUserMessage === "__START_INTERVIEW__";
 
@@ -47,19 +60,31 @@ export async function chatWithInterviewer(pastHistory, latestUserMessage, resume
   if (isStartSignal) {
     messages.push({
       role: "user",
-      content: "Hi, let's start the interview. Please greet me briefly and ask your first question based on my resume.",
+      content: "Hi, let's start the interview. Please greet me briefly and ask your first question specifically tailored to a project or skill listed on my resume.",
     });
   } else {
     messages.push({ role: "user", content: latestUserMessage });
   }
 
+  // 2. PROMPT RESTRUCTURE: Use XML tags and strong constraint language for Llama 3
   const systemPrompt = `You are an expert technical interviewer conducting a mock interview for a software engineering role.
+
+${resumeText ? `CRITICAL CONTEXT: Here is the candidate's resume. You MUST base your interview questions directly on the skills, projects, and experiences listed below.
+<candidate_resume>
+${resumeText}
+</candidate_resume>\n` : ""}
+STRICT INSTRUCTIONS:
+- Follow the SAME ORDER in which sections appear in the resume above (for example: Skills first, then Projects, then Experience, then Education — whatever order the resume actually lists them in).
+- Do NOT jump straight to Projects or Experience. Start with whatever section comes first in the resume (usually Skills/Languages), ask 1-2 questions about it, then move to the next section in order.
+- Within a section, ask about the specific items listed (e.g. if the candidate lists "Python, JavaScript, SQL" under skills, ask about one or more of those specifically before moving on).
+- Do NOT move to the next resume section until you have asked at least one question about the current section.
 - Ask exactly ONE clear question at a time.
+- Do not ask generic trivia unless it relates to their listed skills.
 - Wait for the user to answer.
 - Evaluate their answer briefly, then ask the next question.
 - Keep your responses under two sentences so they sound natural when spoken aloud.
-- DO NOT use markdown, bold text, or bullet points.
-${resumeText ? `\n\nHere is the candidate's resume. Use it to ask relevant, personalized questions:\n"""\n${resumeText}\n"""` : ""}`;
+- DO NOT use markdown, bold text, or bullet points.`;
+
 
   let maxRetries = 3;
 
@@ -77,7 +102,7 @@ ${resumeText ? `\n\nHere is the candidate's resume. Use it to ask relevant, pers
             { role: "system", content: systemPrompt },
             ...messages,
           ],
-          temperature: 0.7,
+          temperature: 0.5, // Lowered slightly so the AI is more factual and sticks to the resume
           max_tokens: 150,
         }),
       });
@@ -89,7 +114,7 @@ ${resumeText ? `\n\nHere is the candidate's resume. Use it to ask relevant, pers
 
       const data = await response.json();
       return data.choices[0].message.content;
-      
+
     } catch (err) {
       const errorMsg = err.message || "";
       if (errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("500")) {

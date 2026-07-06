@@ -131,7 +131,7 @@ export default function InterviewRoom() {
       }, 400);
     };
 
-    
+
     window.speechSynthesis.speak(utterance);
   };
 
